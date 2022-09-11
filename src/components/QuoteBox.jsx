@@ -87,6 +87,7 @@ export default class QuoteBox extends React.Component {
         <a
           id="tweet-quote"
           target={"_blank"}
+          rel="noreferrer"
           href={`https://twitter.com/intent/tweet?text=${params.text} - ${params.author}`}
         >
           <i className={"fa fa-twitter"}></i>

@@ -76,3 +76,41 @@
     border-radius: 2px;
     background-color: #c9c9c9;
 }
+
+@media only screen and (max-width: 600px) {
+    #quote-box {
+        width: 350px;
+    }
+
+    #text svg {
+        font-size: 26px;
+    }
+    
+    #text p {
+        font-size: 26px;
+    }
+    
+    #author {
+        font-size: 22px;
+        margin: 15px 10px 10px 0;
+    }
+}
+
+@media only screen and (max-width: 321px) {
+    #quote-box {
+        width: 250px;
+    }
+
+    #text svg {
+        font-size: 24px;
+    }
+    
+    #text p {
+        font-size: 24px;
+    }
+    
+    #author {
+        font-size: 20px;
+        margin: 10px 5px 10px 0;
+    }
+}
