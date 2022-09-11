@@ -1,0 +1,12 @@
+#quote-box {
+    text-align: center;
+}
+
+#text i,
+#text p {
+    display: inline-block;
+}
+
+#text i {
+    margin-right: 10px;
+}
