@@ -1,53 +1,35 @@
 import React from "react";
-import axios from "axios";
 import "../assets/styles/QuoteBox.css";
+import Quotes from "../assets/quotes.json";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowsRotate, faQuoteLeft } from "@fortawesome/free-solid-svg-icons";
 
 export default class QuoteBox extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       quotes: [],
       quotesIndex: -1,
       text: "Blue = Rolemadelen",
-      author: "Y",
+      author: "2b",
     };
 
     this.populateNewQuote = this.populateNewQuote.bind(this);
   }
 
   componentDidMount() {
-    let q = localStorage.getItem("quotes");
-    let loadQuotes = JSON.parse(q);
+    console.log("componentDidMount");
+    let q = JSON.parse(JSON.stringify(Quotes));
 
-    if (!loadQuotes) {
-      loadQuotes = [];
-      console.log("making an api call");
-      const TOTAL_PAGES = 5;
-
-      for (let page = 1; page < TOTAL_PAGES; page++) {
-        let quoteURL = `http://api.quotable.io/quotes?page=${page}`;
-        axios.get(quoteURL).then((response) => {
-          loadQuotes = [...loadQuotes, ...response.data.results];
-        });
-      }
-
-      setTimeout(() => {
-        localStorage.setItem("quotes", JSON.stringify(loadQuotes));
-      }, 1000);
-    }
-
-    setTimeout(() => {
-      this.setState({
-        quotes: loadQuotes,
-      });
-    }, 1000);
+    this.setState({
+      quotes: q.results
+    });
   }
 
   populateNewQuote() {
     if (this.state.quotes.length === 0) {
-        console.log("quotes list is empty");
+      console.log("quotes list is empty");
       return;
     }
 
@@ -104,6 +86,7 @@ export default class QuoteBox extends React.Component {
         <p id="author">{this.state.author}</p>
         <a
           id="tweet-quote"
+          target={"_blank"}
           href={`https://twitter.com/intent/tweet?text=${params.text} - ${params.author}`}
         >
           <i className={"fa fa-twitter"}></i>
