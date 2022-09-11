@@ -4,6 +4,7 @@ body {
     box-sizing: border-box;
     font-family: 'Cormorant Garamond', serif;
     color: #666;
+    background-color: #eee;
 }
 
 p {

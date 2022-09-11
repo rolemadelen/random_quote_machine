@@ -4,59 +4,97 @@ import "../assets/styles/QuoteBox.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowsRotate, faQuoteLeft } from "@fortawesome/free-solid-svg-icons";
 
-class QuoteBox extends React.Component {
+export default class QuoteBox extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {
-      text: "",
-      author: "",
+      quotes: [],
+      quotesIndex: -1,
+      text: "Blue = Rolemadelen",
+      author: "Y",
     };
 
     this.populateNewQuote = this.populateNewQuote.bind(this);
   }
 
   componentDidMount() {
-    const quoteURL = "https://api.quotable.io/random";
+    let q = localStorage.getItem("quotes");
+    let loadQuotes = JSON.parse(q);
 
-    axios.get(quoteURL).then((response) => {
+    if (!loadQuotes) {
+      loadQuotes = [];
+      console.log("making an api call");
+      const TOTAL_PAGES = 5;
+
+      for (let page = 1; page < TOTAL_PAGES; page++) {
+        let quoteURL = `http://api.quotable.io/quotes?page=${page}`;
+        axios.get(quoteURL).then((response) => {
+          loadQuotes = [...loadQuotes, ...response.data.results];
+        });
+      }
+
+      setTimeout(() => {
+        localStorage.setItem("quotes", JSON.stringify(loadQuotes));
+      }, 1000);
+    }
+
+    setTimeout(() => {
       this.setState({
-        text: response.data.content,
-        author: response.data.author,
+        quotes: loadQuotes,
       });
-    });
+    }, 1000);
   }
 
   populateNewQuote() {
-    const quoteURL = "https://api.quotable.io/random";
+    if (this.state.quotes.length === 0) {
+        console.log("quotes list is empty");
+      return;
+    }
+
+    let index = Math.floor(Math.random() * this.state.quotes.length);
+    while (this.state.quotesIndex === index) {
+      index = Math.floor(Math.random() * this.state.quotes.length);
+    }
+
+    this.setState({
+      quotesIndex: index,
+    });
+
+    const quote = this.state.quotes[index];
 
     document.querySelector("#text").style.opacity = "0";
     document.querySelector("#author").style.opacity = "0";
 
-    axios.get(quoteURL).then((response) => {
-      this.setState({
-        text: response.data.content,
-        author: response.data.author,
-      });
-    });
-
     setTimeout(() => {
+      this.setState({
+        text: quote.content,
+        author: quote.author,
+      });
+
       document.querySelector("#text").style.opacity = "1";
       document.querySelector("#author").style.opacity = "1";
 
       let color = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+
       document.querySelector(
         "#quote-box"
-      ).style.boxShadow = `0 0 20px 0 ${color}`;
+      ).style.boxShadow = `0 0 10px 1px ${color}`;
+
       document.querySelector(
         "#new-quote"
       ).style.boxShadow = `0 0 1px 1px ${color}`;
+
       document.querySelector("#text > svg").style.color = color;
       document.querySelector("#tweet-quote").style.backgroundColor = color;
-    }, 500);
+    }, 300);
   }
 
   render() {
+    const params = {
+      text: `${encodeURIComponent('"' + this.state.text + '"')}`,
+      author: `${encodeURIComponent(this.state.author)}`,
+    };
+
     return (
       <div id="quote-box">
         <div id="text">
@@ -66,19 +104,14 @@ class QuoteBox extends React.Component {
         <p id="author">{this.state.author}</p>
         <a
           id="tweet-quote"
-          href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
-            '"' + this.state.text + '"'
-          )} by ${encodeURIComponent(this.state.author)}`}
+          href={`https://twitter.com/intent/tweet?text=${params.text} - ${params.author}`}
         >
           <i className={"fa fa-twitter"}></i>
         </a>
         <button id="new-quote" onClick={this.populateNewQuote}>
           <FontAwesomeIcon icon={faArrowsRotate} />
-          {/* new quote */}
         </button>
       </div>
     );
   }
 }
-
-export default QuoteBox;
